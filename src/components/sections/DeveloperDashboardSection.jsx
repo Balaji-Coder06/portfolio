@@ -1,16 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, GitFork, Users, BookOpen, Activity, Terminal, Cpu, ExternalLink, RefreshCw, Sparkles, CheckCircle2, TrendingUp, BarChart3, Clock, AlertTriangle, Calendar } from 'lucide-react';
+import { Star, Users, BookOpen, Activity, RefreshCw, Sparkles, BarChart3, Calendar, ExternalLink } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
 import Card from '../ui/Card';
-import Badge from '../ui/Badge';
 import Button from '../ui/Button';
-import Magnetic from '../ui/Magnetic';
 import AnimatedCounter from '../ui/AnimatedCounter';
 import { GithubIcon } from '../ui/SocialIcons';
 import { useDeveloperStats } from '../../hooks/useDeveloperStats';
-import githubContributions from '../../data/githubContributions.json';
-
 
 function formatDateLabel(dateStr) {
   if (!dateStr) return '';
@@ -20,41 +16,61 @@ function formatDateLabel(dateStr) {
   return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-// Build 52-Week Real Contribution Matrix from GitHub Telemetry Data
-const buildHeatmapWeeks = () => {
-  const days = githubContributions.days || [];
+// Build 52-Week Contribution Matrix from Live GitHub Telemetry Data
+const buildHeatmapWeeks = (days = []) => {
+  if (!days || days.length === 0) return [];
   const weeks = [];
   let currentWeek = [];
-  
-  days.forEach((day, index) => {
-    let colorClass = "bg-neutral-900 border-neutral-800/80";
-    if (day.level === 1) colorClass = "bg-emerald-950 border-emerald-800/60";
-    else if (day.level === 2) colorClass = "bg-emerald-800/80 border-emerald-600/60 shadow-[0_0_4px_rgba(16,185,129,0.3)]";
-    else if (day.level === 3) colorClass = "bg-emerald-600 border-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
-    else if (day.level >= 4) colorClass = "bg-emerald-400 border-emerald-300 shadow-[0_0_10px_#10b981]";
+
+  // Align starting day to Sunday if necessary
+  const firstDay = new Date(days[0].date);
+  const firstDayOfWeek = isNaN(firstDay.getDay()) ? 0 : firstDay.getDay(); // 0 is Sunday
+  for (let i = 0; i < firstDayOfWeek; i++) {
+    currentWeek.push({
+      date: '',
+      count: 0,
+      level: 0,
+      colorClass: 'invisible pointer-events-none opacity-0'
+    });
+  }
+
+  days.forEach((day) => {
+    let colorClass = 'bg-neutral-900 border-neutral-800/80';
+    if (day.level === 1) colorClass = 'bg-emerald-950 border-emerald-800/60';
+    else if (day.level === 2) colorClass = 'bg-emerald-800/80 border-emerald-600/60 shadow-[0_0_4px_rgba(16,185,129,0.3)]';
+    else if (day.level === 3) colorClass = 'bg-emerald-600 border-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
+    else if (day.level >= 4) colorClass = 'bg-emerald-400 border-emerald-300 shadow-[0_0_10px_#10b981]';
 
     currentWeek.push({
       date: day.date,
-      count: day.level,
+      count: typeof day.count === 'number' ? day.count : (day.level || 0),
+      level: day.level || 0,
       colorClass
     });
 
-    if (currentWeek.length === 7 || index === days.length - 1) {
+    if (currentWeek.length === 7) {
       weeks.push(currentWeek);
       currentWeek = [];
     }
   });
 
+  if (currentWeek.length > 0) {
+    weeks.push(currentWeek);
+  }
+
   return weeks;
 };
 
-const heatmapWeeks = buildHeatmapWeeks();
-
 export default function DeveloperDashboardSection() {
-  const { stats, loading, error } = useDeveloperStats();
+  const { stats, loading, refetch } = useDeveloperStats();
   const [hoveredDay, setHoveredDay] = useState(null);
 
   const gh = stats.github;
+  const contributions = stats.contributions;
+  const totalContributions = contributions?.totalContributions ?? 167;
+  const days = contributions?.days || [];
+
+  const heatmapWeeks = useMemo(() => buildHeatmapWeeks(days), [days]);
 
   return (
     <section id="dashboard" className="py-28 relative overflow-hidden bg-transparent">
@@ -72,7 +88,6 @@ export default function DeveloperDashboardSection() {
           subtitle="Real-time GitHub profile metrics and contribution telemetry fetched automatically. Zero hardcoded data."
         />
 
-
         {/* 1. Metric Counter Dashboard Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
 
@@ -85,7 +100,7 @@ export default function DeveloperDashboardSection() {
               <div>
                 <span className="text-[11px] font-mono text-neutral-400 uppercase block">Public Repos</span>
                 <span className="text-2xl font-black text-neutral-100">
-                  {loading ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.publicRepos ?? 10} />}
+                  {loading && !gh ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.publicRepos ?? 10} />}
                 </span>
               </div>
             </div>
@@ -100,7 +115,7 @@ export default function DeveloperDashboardSection() {
               <div>
                 <span className="text-[11px] font-mono text-neutral-400 uppercase block">GitHub Followers</span>
                 <span className="text-2xl font-black text-neutral-100">
-                  {loading ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.followers ?? 20} />}
+                  {loading && !gh ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.followers ?? 20} />}
                 </span>
               </div>
             </div>
@@ -115,7 +130,7 @@ export default function DeveloperDashboardSection() {
               <div>
                 <span className="text-[11px] font-mono text-neutral-400 uppercase block">GitHub Stars</span>
                 <span className="text-2xl font-black text-neutral-100">
-                  {loading ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.totalStars ?? 15} />}
+                  {loading && !gh ? <span className="animate-pulse">...</span> : <AnimatedCounter value={gh?.totalStars ?? 15} />}
                 </span>
               </div>
             </div>
@@ -130,7 +145,11 @@ export default function DeveloperDashboardSection() {
               <div>
                 <span className="text-[11px] font-mono text-neutral-400 uppercase block">Total Commits</span>
                 <span className="text-2xl font-black text-neutral-100">
-                  {loading ? <span className="animate-pulse">...</span> : <AnimatedCounter value={githubContributions.totalContributions ?? 196} />}
+                  {loading && !contributions ? (
+                    <span className="animate-pulse">...</span>
+                  ) : (
+                    <AnimatedCounter value={totalContributions} />
+                  )}
                 </span>
               </div>
             </div>
@@ -145,27 +164,38 @@ export default function DeveloperDashboardSection() {
 
             {/* 365-Day Contribution Matrix Card */}
             <Card className="p-6 relative" tiltEffect={false}>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-2.5">
-                  <Activity className="w-5 h-5 text-emerald-400" />
+                  <Activity className="w-5 h-5 text-emerald-400 shrink-0" />
                   <div>
                     <h3 className="text-base font-bold text-neutral-100">GitHub Contribution Telemetry</h3>
                     <p className="text-xs text-neutral-400">
-                      Live 365-day commit history matrix • <span className="text-emerald-400 font-semibold">{githubContributions.totalContributions || 196} contributions</span> in the last year
+                      Live 365-day commit history matrix •{' '}
+                      <span className="text-emerald-400 font-semibold">{totalContributions} contributions</span> in the last year
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Verified Telemetry</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => refetch()}
+                    disabled={loading}
+                    className="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-emerald-400 hover:border-emerald-500/40 transition-colors disabled:opacity-50"
+                    title="Refresh Live GitHub Telemetry"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
+                  </button>
+                  <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{loading ? 'Syncing...' : 'Live Telemetry'}</span>
+                  </div>
                 </div>
               </div>
 
               {/* Interactive Telemetry Inspection Banner */}
               <div className="mb-4 min-h-[36px]">
                 <AnimatePresence mode="wait">
-                  {hoveredDay ? (
+                  {hoveredDay && hoveredDay.date ? (
                     <motion.div
                       key={hoveredDay.date}
                       initial={{ opacity: 0, y: 3 }}
@@ -179,9 +209,9 @@ export default function DeveloperDashboardSection() {
                         <span className="font-semibold text-emerald-200">{formatDateLabel(hoveredDay.date)}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-neutral-400">Activity Level:</span>
+                        <span className="text-neutral-400">Activity:</span>
                         <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
-                          {hoveredDay.count > 0 ? `Level ${hoveredDay.count} Commits` : 'No Commits (Rest Day)'}
+                          {hoveredDay.count > 0 ? `${hoveredDay.count} ${hoveredDay.count === 1 ? 'Commit' : 'Commits'}` : 'No Commits (Rest Day)'}
                         </span>
                       </div>
                     </motion.div>
@@ -205,12 +235,16 @@ export default function DeveloperDashboardSection() {
                       {week.map((day, dIdx) => (
                         <div
                           key={dIdx}
-                          onMouseEnter={() => setHoveredDay(day)}
+                          onMouseEnter={() => day.date && setHoveredDay(day)}
                           onMouseLeave={() => setHoveredDay(null)}
-                          className={`w-2.5 h-2.5 rounded-sm border ${day.colorClass} transition-all duration-150 cursor-pointer ${
-                            hoveredDay?.date === day.date ? 'ring-2 ring-emerald-400 border-emerald-300 z-20 shadow-[0_0_8px_#10b981]' : 'hover:ring-1 hover:ring-emerald-400/80 hover:border-emerald-400'
+                          className={`w-2.5 h-2.5 rounded-sm border ${day.colorClass} transition-all duration-150 ${
+                            day.date ? 'cursor-pointer' : ''
+                          } ${
+                            hoveredDay?.date && hoveredDay.date === day.date
+                              ? 'ring-2 ring-emerald-400 border-emerald-300 z-20 shadow-[0_0_8px_#10b981]'
+                              : day.date ? 'hover:ring-1 hover:ring-emerald-400/80 hover:border-emerald-400' : ''
                           }`}
-                          title={`${day.date}: ${day.count > 0 ? `Level ${day.count} activity` : 'No contributions'}`}
+                          title={day.date ? `${day.date}: ${day.count} ${day.count === 1 ? 'commit' : 'commits'}` : undefined}
                         />
                       ))}
                     </div>
@@ -222,10 +256,11 @@ export default function DeveloperDashboardSection() {
               <div className="mt-4 pt-4 border-t border-neutral-800/80 flex items-center justify-between text-xs font-mono text-neutral-400">
                 <span>Less Activity</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-neutral-900 border border-neutral-800" />
-                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-950 border border-emerald-800" />
-                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-700" />
-                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-400" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-neutral-900 border border-neutral-800" title="0 commits" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-950 border border-emerald-800" title="1-2 commits" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-800/80 border border-emerald-600/60" title="3-5 commits" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-600 border border-emerald-500" title="6-10 commits" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-400 border border-emerald-300" title="11+ commits" />
                 </div>
                 <span>More Activity</span>
               </div>
@@ -294,30 +329,30 @@ export default function DeveloperDashboardSection() {
             <Card className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <img
-                  src={gh?.avatar || "https://avatars.githubusercontent.com/u/Balaji-Coder06"}
+                  src={gh?.avatar || 'https://avatars.githubusercontent.com/u/Balaji-Coder06'}
                   alt="GitHub Avatar"
                   className="w-14 h-14 rounded-2xl border border-emerald-500/40 p-0.5 object-cover"
                 />
                 <div>
-                  <h3 className="text-base font-bold text-neutral-100">{gh?.name || "S Balaji"}</h3>
+                  <h3 className="text-base font-bold text-neutral-100">{gh?.name || 'S Balaji'}</h3>
                   <a
-                    href={`https://github.com/${gh?.username || "Balaji-Coder06"}`}
+                    href={`https://github.com/${gh?.username || 'Balaji-Coder06'}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-mono text-emerald-400 hover:underline flex items-center gap-1"
                   >
-                    <span>@{gh?.username || "Balaji-Coder06"}</span>
+                    <span>@{gh?.username || 'Balaji-Coder06'}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
               </div>
 
               <p className="text-xs text-neutral-300 leading-relaxed mb-4">
-                {gh?.bio || "Computer Science Engineering student crafting responsive web applications, full-stack tools, and exploring AI/ML models."}
+                {gh?.bio || 'Computer Science Engineering student crafting responsive web applications, full-stack tools, and exploring AI/ML models.'}
               </p>
 
               <Button
-                href={`https://github.com/${gh?.username || "Balaji-Coder06"}`}
+                href={`https://github.com/${gh?.username || 'Balaji-Coder06'}`}
                 target="_blank"
                 variant="primary"
                 size="sm"
@@ -362,7 +397,7 @@ export default function DeveloperDashboardSection() {
                   ))
                 ) : (
                   <div className="space-y-2">
-                    {["Portfolio", "Campus-Connect", "MHA-DokuWiki"].map((r) => (
+                    {['Weather-Sentinel', 'Stock_Sphere', 'portfolio', 'Campus-Connect'].map((r) => (
                       <a
                         key={r}
                         href={`https://github.com/Balaji-Coder06/${r}`}
@@ -386,7 +421,6 @@ export default function DeveloperDashboardSection() {
           </div>
 
         </div>
-
 
       </div>
     </section>

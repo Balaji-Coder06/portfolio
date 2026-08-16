@@ -52,7 +52,19 @@ function ProjectImage({ src, alt, className }) {
 
 // Enhanced project dataset with visual previews, carousel views, and status metadata
 const enhancedProjects = projectsData.map((project) => {
-  if (project.id === 'stocksphere') {
+  if (project.id === 'weather-sentinel') {
+    return {
+      ...project,
+      image: '/weathersentinel_preview.png',
+      status: 'Live Intelligence Feed',
+      version: 'v1.0 Live',
+      carousel: [
+        { label: 'Overview', image: '/weathersentinel_preview.png', caption: 'Weather Sentinel Environmental Intelligence Dashboard' },
+        { label: 'Activity Planner', image: '/weathersentinel_preview.png', caption: 'Context-Aware Decision Support & Activity Sensitivity Profiles' },
+        { label: 'Live Telemetry', image: '/weathersentinel_preview.png', caption: 'Open-Meteo Live Meteorological Telemetry Feed' }
+      ]
+    };
+  } else if (project.id === 'stocksphere') {
     return {
       ...project,
       image: '/stocksphere_preview.png',
@@ -172,9 +184,9 @@ export default function ProjectsSection() {
               <div className="lg:col-span-6 space-y-5">
                 
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-emerald-400 text-emerald-400" />
-                    Featured Masterpiece
+                  <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/30 flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.2)]">
+                    <Star className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
+                    Featured Project
                   </span>
                   <span className="text-xs font-mono text-emerald-300 bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-full flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -369,15 +381,27 @@ export default function ProjectsSection() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   whileHover={{ y: -8 }}
                 >
-                  <Card className="h-full flex flex-col justify-between p-6 group hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all">
+                  <Card className={`h-full flex flex-col justify-between p-6 group transition-all duration-300 ${
+                    project.id === 'weather-sentinel'
+                      ? 'border-cyan-500/40 hover:border-cyan-400/80 shadow-xl shadow-cyan-500/5 hover:shadow-cyan-500/20 bg-gradient-to-b from-neutral-900/90 to-neutral-950 ring-1 ring-cyan-500/25'
+                      : 'hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-500/10'
+                  }`}>
                     <div>
                       
                       {/* Window Header & Status Badge */}
                       <div className="flex items-center justify-between mb-4">
-                        <span className="text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          {project.status || 'Active'}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {project.id === 'weather-sentinel' && (
+                            <span className="text-[11px] font-mono font-bold text-cyan-400 bg-cyan-500/15 px-2.5 py-0.5 rounded-full border border-cyan-500/40 flex items-center gap-1 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
+                              <Star className="w-3 h-3 fill-cyan-400 text-cyan-400" />
+                              Featured Project
+                            </span>
+                          )}
+                          <span className="text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            {project.status || 'Active'}
+                          </span>
+                        </div>
 
                         <div className="flex items-center gap-2">
                           {project.github && (
@@ -385,7 +409,7 @@ export default function ProjectsSection() {
                               href={project.github}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-2 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-neutral-100 hover:border-emerald-500/40 transition-all"
+                              className="p-2 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-neutral-100 hover:border-cyan-500/40 transition-all"
                               title="View Code Repository"
                             >
                               <GithubIcon className="w-4 h-4" />
@@ -397,7 +421,11 @@ export default function ProjectsSection() {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={triggerConfetti}
-                              className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-neutral-950 transition-all"
+                              className={`p-2 rounded-xl border transition-all ${
+                                project.id === 'weather-sentinel'
+                                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-neutral-950 shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+                                  : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-neutral-950'
+                              }`}
                               title="Launch Project"
                             >
                               <ArrowUpRight className="w-4 h-4" />
@@ -479,7 +507,7 @@ export default function ProjectsSection() {
                     {/* Tech Chips Footer */}
                     <div className="pt-4 border-t border-neutral-800/80 flex flex-wrap gap-1.5">
                       {project.tags.map((t) => (
-                        <Badge key={t} variant="neutral">
+                        <Badge key={t} variant={project.id === 'weather-sentinel' ? 'cyan' : 'neutral'}>
                           {t}
                         </Badge>
                       ))}

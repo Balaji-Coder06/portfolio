@@ -25,6 +25,27 @@ export const personalData = {
 
 export const projectsData = [
   {
+    id: "weather-sentinel",
+    title: "Weather Sentinel",
+    tagline: "Real-Time Weather Intelligence & Environmental Risk Dashboard",
+    description: "A real-time weather intelligence dashboard that lets users search locations worldwide, explore current weather conditions, and monitor forecasts through an interactive and responsive interface.",
+    fullDescription: "A real-time weather intelligence dashboard that computes activity-specific risk profiles, thermal strain, aerodynamic resistance, and timing viability. Features global location search, live meteorological telemetry from Open-Meteo, interactive 24-hour forecasting, and responsive environmental insights.",
+    category: "Web Application",
+    tags: ["React", "JavaScript", "TailwindCSS", "Open-Meteo API", "Framer Motion", "Vite"],
+    github: "https://github.com/Balaji-Coder06/Weather-Sentinel",
+    live: "https://weathersentinel.netlify.app/",
+    image: "/weathersentinel_preview.png",
+    featured: true,
+    accentColor: "#38bdf8",
+    status: "Live Platform",
+    highlights: [
+      "Real-time meteorological telemetry & global location search",
+      "Context-aware activity sensitivity & environmental risk weighting",
+      "24-Hour optimal timing discovery & forecast analytics",
+      "Responsive fluid dashboard with glassmorphic dark interface"
+    ]
+  },
+  {
     id: "stocksphere",
     title: "StockSphere",
     tagline: "Next-Gen AI-Powered Enterprise Intelligence Platform",
