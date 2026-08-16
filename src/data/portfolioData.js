@@ -53,7 +53,7 @@ export const projectsData = [
     fullDescription: "Built completely from scratch using React, Vite, Tailwind CSS v4, and motion engineering primitives. Replaces legacy multi-page static layouts with a unified single-page architecture designed for maximum performance and visual impact.",
     category: "Web Application",
     tags: ["React", "Vite", "TailwindCSS", "Framer Motion", "GSAP", "Lenis"],
-    github: "https://github.com/Balaji-Coder06/New-Portfolio",
+    github: "https://github.com/Balaji-Coder06/portfolio",
     live: "https://sbalajiportfolio.is-a.dev/",
     image: "/portfolio_preview.png",
     featured: true,
