@@ -12,12 +12,10 @@ import ExperienceSection from './components/sections/ExperienceSection';
 import DeveloperDashboardSection from './components/sections/DeveloperDashboardSection';
 import ContactSection from './components/sections/ContactSection';
 import CodeTerminalModal from './components/interactive/CodeTerminalModal';
-import InitialLoader from './components/interactive/InitialLoader';
 import MusicPlayer from './components/interactive/MusicPlayer';
 
 export default function App() {
   const [terminalOpen, setTerminalOpen] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -35,9 +33,6 @@ export default function App() {
     <SmoothScrollProvider>
       <div className="min-h-screen bg-[#050508] text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300 relative font-sans">
         
-        {/* Initial Loading Experience */}
-        <InitialLoader onComplete={() => setInitialLoading(false)} />
-
         {/* Layered Cinematic Global Background */}
         <GlobalBackground />
 
@@ -62,7 +57,7 @@ export default function App() {
         <Footer />
 
         {/* Global Floating Cyber Glass Music Player */}
-        {!initialLoading && <MusicPlayer />}
+        <MusicPlayer />
 
         {/* CLI Terminal Modal */}
         <CodeTerminalModal
