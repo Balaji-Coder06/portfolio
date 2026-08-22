@@ -63,7 +63,7 @@ export default function HeroSection({ onOpenTerminal }) {
   }, [displayedRole, isDeleting, roleIndex]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-28 pb-16 overflow-hidden bg-transparent">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-40 pb-16 overflow-hidden bg-transparent">
       
       {/* Ambient Gradient Glow Orbs */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />

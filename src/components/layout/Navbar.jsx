@@ -108,14 +108,14 @@ export default function Navbar({ onOpenTerminal }) {
           
           {/* Ambient Glowing Gradient Backdrop Layer behind Navbar */}
           <div
-            className={`absolute -inset-1 rounded-[32px] bg-gradient-to-r from-emerald-500/25 via-cyan-500/15 to-violet-500/25 blur-xl transition-all duration-500 pointer-events-none ${
+            className={`absolute -inset-1 rounded-2xl sm:rounded-[28px] xl:rounded-[32px] bg-gradient-to-r from-emerald-500/25 via-cyan-500/15 to-violet-500/25 blur-xl transition-all duration-500 pointer-events-none ${
               scrolled ? 'opacity-80 scale-[0.99]' : 'opacity-40 scale-100'
             }`}
           />
 
           {/* Main Floating Glass Panel Container */}
           <div
-            className={`relative w-full rounded-[28px] sm:rounded-[32px] transition-all duration-500 flex items-center justify-between px-5 sm:px-8 py-3 sm:py-3.5 shadow-2xl ${
+            className={`relative w-full max-w-full overflow-hidden rounded-2xl sm:rounded-[28px] xl:rounded-[32px] transition-all duration-500 flex items-center gap-2 sm:gap-3 xl:gap-4 px-3 sm:px-4 xl:px-6 py-2.5 sm:py-3 xl:py-3.5 shadow-2xl ${
               scrolled
                 ? 'bg-neutral-950/85 backdrop-blur-3xl border border-emerald-500/30 shadow-black/90 shadow-emerald-500/5'
                 : 'bg-neutral-900/60 backdrop-blur-2xl border border-white/10 shadow-black/50'
@@ -127,24 +127,24 @@ export default function Navbar({ onOpenTerminal }) {
           >
 
             {/* Brand Logo with Magnetic Interaction */}
-            <Magnetic strength={0.25}>
+            <Magnetic strength={0.25} className="shrink-0 min-w-0">
               <a
                 href="#hero"
                 onClick={(e) => handleNavClick(e, '#hero')}
-                className="flex items-center gap-3.5 group focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 focus-visible:outline-none rounded-2xl p-1 transition-all"
+                className="flex items-center gap-2 sm:gap-3 group focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 focus-visible:outline-none rounded-2xl p-0.5 sm:p-1 transition-all min-w-0"
                 aria-label="S Balaji Portfolio Home"
               >
-                <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-400 via-cyan-400 to-violet-600 p-[1.5px] shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/50 group-hover:scale-105 transition-all">
-                  <div className="w-full h-full bg-neutral-950 rounded-[14px] flex items-center justify-center">
-                    <Code2 className="w-5 h-5 text-emerald-400 group-hover:rotate-12 transition-transform duration-300" />
+                <div className="relative w-9 h-9 sm:w-10 sm:h-10 xl:w-11 xl:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-400 via-cyan-400 to-violet-600 p-[1.5px] shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/50 group-hover:scale-105 transition-all shrink-0">
+                  <div className="w-full h-full bg-neutral-950 rounded-[11px] sm:rounded-[14px] flex items-center justify-center">
+                    <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 group-hover:rotate-12 transition-transform duration-300" />
                   </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-base sm:text-lg font-black text-neutral-100 group-hover:text-emerald-400 transition-colors tracking-tight flex items-center gap-2">
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm sm:text-base xl:text-lg font-black text-neutral-100 group-hover:text-emerald-400 transition-colors tracking-tight flex items-center gap-1.5 sm:gap-2 truncate">
                     S BALAJI
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="hidden sm:inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400/90 tracking-widest uppercase font-semibold">
+                  <span className="hidden sm:block text-[9px] sm:text-[10px] font-mono text-emerald-400/90 tracking-widest uppercase font-semibold truncate">
                     Coding for Fun
                   </span>
                 </div>
@@ -154,25 +154,22 @@ export default function Navbar({ onOpenTerminal }) {
             {/* Desktop Navigation Track Bar */}
             <nav
               ref={navRef}
-              className="hidden lg:flex items-center gap-1.5 bg-neutral-950/70 border border-white/10 p-2 rounded-full backdrop-blur-2xl relative shadow-inner"
+              className="hidden xl:flex flex-1 items-center justify-center min-w-0 px-1"
               aria-label="Main Navigation"
             >
+              <div className="flex items-center gap-0.5 2xl:gap-1 bg-neutral-950/70 border border-white/10 p-1 2xl:p-1.5 rounded-full backdrop-blur-2xl shadow-inner max-w-full">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
                 const isHovered = hoveredNav === item.id;
 
                 return (
-                  <Magnetic key={item.id} strength={0.18}>
+                  <Magnetic key={item.id} strength={0.18} className="shrink-0">
                     <a
                       href={item.href}
                       onClick={(e) => handleNavClick(e, item.href)}
                       onMouseEnter={() => setHoveredNav(item.id)}
                       onMouseLeave={() => setHoveredNav(null)}
-                      className={`relative px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-semibold rounded-full transition-all duration-300 block focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none ${
-                        isActive
-                          ? 'text-emerald-300 font-bold'
-                          : 'text-neutral-300 hover:text-neutral-100'
-                      }`}
+                      className="relative px-2 py-1.5 2xl:px-3 2xl:py-2 text-xs 2xl:text-sm font-semibold rounded-full transition-all duration-300 block focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none whitespace-nowrap"
                       aria-current={isActive ? 'page' : undefined}
                     >
                       {/* Active Background Pill Animation */}
@@ -199,7 +196,7 @@ export default function Navbar({ onOpenTerminal }) {
                       {isActive && (
                         <motion.div
                           layoutId="activeNavUnderline"
-                          className="absolute bottom-1 left-4 right-4 h-[2.5px] bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full shadow-[0_0_10px_#10b981]"
+                          className="absolute bottom-1 left-2 right-2 2xl:left-3 2xl:right-3 h-[2px] bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full shadow-[0_0_10px_#10b981]"
                           transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                         />
                       )}
@@ -207,33 +204,34 @@ export default function Navbar({ onOpenTerminal }) {
                   </Magnetic>
                 );
               })}
+              </div>
             </nav>
 
             {/* Right Action Area */}
-            <div className="hidden lg:flex items-center gap-3.5">
-              <Magnetic strength={0.2}>
+            <div className="hidden xl:flex items-center gap-2 2xl:gap-3.5 shrink-0">
+              <Magnetic strength={0.2} className="shrink-0">
                 <button
                   onClick={onOpenTerminal}
-                  className="flex items-center gap-2.5 text-xs sm:text-sm font-mono text-neutral-200 hover:text-emerald-400 bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-800 hover:border-emerald-500/40 px-4 py-2.5 rounded-2xl transition-all shadow-md focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none group"
+                  className="flex items-center gap-1.5 2xl:gap-2.5 text-xs 2xl:text-sm font-mono text-neutral-200 hover:text-emerald-400 bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-800 hover:border-emerald-500/40 px-3 py-2 2xl:px-4 2xl:py-2.5 rounded-xl 2xl:rounded-2xl transition-all shadow-md focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none group whitespace-nowrap"
                   title="Open Interactive CLI Terminal (Cmd+K)"
                   aria-label="Open Interactive CLI Terminal"
                 >
-                  <Terminal className="w-4 h-4 text-emerald-400 group-hover:rotate-6 transition-transform" />
+                  <Terminal className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-emerald-400 group-hover:rotate-6 transition-transform shrink-0" />
                   <span className="font-semibold">CLI</span>
-                  <kbd className="bg-neutral-800 text-neutral-400 text-[11px] px-2 py-0.5 rounded-lg border border-neutral-700 font-sans flex items-center gap-0.5">
+                  <kbd className="hidden 2xl:flex bg-neutral-800 text-neutral-400 text-[11px] px-2 py-0.5 rounded-lg border border-neutral-700 font-sans items-center gap-0.5 shrink-0">
                     <Command className="w-3 h-3" />K
                   </kbd>
                 </button>
               </Magnetic>
 
-              <Magnetic strength={0.25}>
+              <Magnetic strength={0.25} className="shrink-0">
                 <Button
                   href={personalData.resumeLink}
                   target="_blank"
                   variant="primary"
                   size="md"
                   icon={FileText}
-                  className="px-5 py-2.5 rounded-2xl font-bold shadow-lg shadow-emerald-500/20"
+                  className="px-3.5 py-2 2xl:px-5 2xl:py-2.5 rounded-xl 2xl:rounded-2xl text-xs 2xl:text-sm font-bold shadow-lg shadow-emerald-500/20 whitespace-nowrap"
                 >
                   Resume
                 </Button>
@@ -241,7 +239,7 @@ export default function Navbar({ onOpenTerminal }) {
             </div>
 
             {/* Mobile Controls & Morphing Animated Hamburger */}
-            <div className="flex lg:hidden items-center gap-3">
+            <div className="flex xl:hidden items-center gap-2 sm:gap-3 shrink-0 ml-auto">
               <button
                 onClick={onOpenTerminal}
                 className="p-3 text-neutral-200 hover:text-emerald-400 bg-neutral-900 border border-neutral-800 rounded-2xl focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none"
@@ -288,7 +286,7 @@ export default function Navbar({ onOpenTerminal }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-30 lg:hidden bg-neutral-950/95 backdrop-blur-3xl flex flex-col pt-32 px-6 pb-10 overflow-y-auto"
+            className="fixed inset-0 z-30 xl:hidden bg-neutral-950/95 backdrop-blur-3xl flex flex-col pt-28 sm:pt-32 px-4 sm:px-6 pb-10 overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile Navigation Menu"
